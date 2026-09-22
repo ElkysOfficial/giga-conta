@@ -1,73 +1,68 @@
-# Welcome to your Lovable project
+<div align="center">
 
-## Project info
+<img src="docs/assets/logo-elkys.png" alt="Elkys" width="112" height="112">
 
-**URL**: https://lovable.dev/projects/4444be96-8660-4e57-9409-89a989adb7cc
+# giga-conta
 
-## How can I edit this code?
+**Easy Budget: gestao financeira pessoal e empresarial, React + Vite (gerado no Lovable).**
 
-There are several ways of editing your application.
+Repositório legado da Elkys, mantido só como histórico.<br/>Sem manutenção, sem deploy e sem garantia de funcionar como está.
 
-**Use Lovable**
+[![status](https://img.shields.io/badge/status-legado%20%C2%B7%20sem%20manuten%C3%A7%C3%A3o-6b6b6b)](#estado)
+[![stack](https://img.shields.io/badge/stack-React%20%20Vite%20%20TypeScript-480388)](#stack)
+[![último commit](https://img.shields.io/badge/%C3%BAltimo%20trabalho-2025--12--03-480388)](#estado)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4444be96-8660-4e57-9409-89a989adb7cc) and start prompting.
+[O que é](#o-que-é) · [Estado](#estado) · [Stack](#stack) · [Rodar](#rodar-localmente) · [Layout](#layout-do-repositório)
 
-Changes made via Lovable will be committed automatically to this repo.
+</div>
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## O que é
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Easy Budget: gestao financeira pessoal e empresarial, React + Vite (gerado no Lovable); legado
 
-Follow these steps:
+## Estado
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+| Item | Situação |
+| --- | --- |
+| Manutenção | nenhuma; o repositório fica como referência |
+| Último trabalho no código | 2025-12-03 |
+| CI | só o `seguranca-e-qualidade.yml` gerado pelo robô do [ci-templates](https://github.com/ElkysOfficial/ci-templates) |
+| Proteção | ruleset da organização: PR obrigatório na branch padrão, sem force-push |
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Para reativar, comece por um projeto novo com `sdk-elkys create` e traga só o que ainda serve.
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Stack
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+React · Vite · TypeScript · Tailwind CSS
+
+## Rodar localmente
+
+```bash
+npm install
 npm run dev
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+Segredos e variáveis, quando existem, ficam em `.env` (nunca versionado); procure um `.env.example`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Layout do repositório
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/4444be96-8660-4e57-9409-89a989adb7cc) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+README.md
+bun.lockb
+components.json
+eslint.config.js
+index.html
+package-lock.json
+package.json
+postcss.config.js
+public/
+src/
+tailwind.config.ts
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+```
