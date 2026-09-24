@@ -7,6 +7,21 @@ description: Boas práticas de código — regras de negócio preservadas acima 
 
 Valem para qualquer projeto e qualquer linguagem.
 
+## As 10 regras da organização
+
+**Leia [`REGRAS.md`](REGRAS.md) antes de escrever código.** São as 10 regras de
+desenvolvimento da organização, obrigatórias em todo projeto — inclusive nos
+gerados pelo SDK.
+
+- **O texto é imutável.** Não se edita, não se resume, não se reescreve. Mudança
+  nele é decisão da organização, feita em PR próprio no `ci-templates`, nunca de
+  carona em outra alteração.
+- **Em conflito, `REGRAS.md` vence.** O restante desta skill detalha e
+  complementa as 10 regras; se alguma frase daqui parecer contradizê-las, vale o
+  que está em `REGRAS.md`.
+- Documento de projeto (`docs/boas-praticas.md`) ou skill `<projeto>-*` manda no
+  detalhe do stack, **nunca contra as 10 regras**.
+
 ## A regra que vem antes de todas
 
 **Toda alteração preserva 100% das regras de negócio existentes.**
@@ -128,6 +143,13 @@ ServicoRelatorio.enviar()
 Exceção: método realmente estático. Dependência que **expira** não se congela
 em tela de vida longa — resolva por chamada e escreva o motivo no cabeçalho.
 
+## Funções da mesma responsabilidade viram serviço
+
+Várias funções que são etapas da mesma responsabilidade (`validar_arquivo()`,
+`processar_arquivo()`, `salvar_arquivo()`) viram métodos de um serviço usado
+por instância. Função puramente utilitária, sem estado e sem regra de negócio
+própria, pode continuar função.
+
 ## Controlador pequeno
 
 Ordem de execução e decisão por status. Nada de infraestrutura direta.
@@ -141,6 +163,10 @@ central da aplicação.
 1 Em execução   2 Exceção de negócio   3 Exceção de sistema
 4 Sucesso       5 Cancelado
 ```
+
+São esses cinco, com esses números e esses significados (definição de cada um
+em `REGRAS.md`, regra 3). Não crie código novo, não reaproveite um número com
+outro sentido e não troque a ordem.
 
 Exceção de **negócio** é culpa do dado: mensagem para o usuário final.
 Exceção de **sistema** é falha técnica: log; usuário vê genérico.

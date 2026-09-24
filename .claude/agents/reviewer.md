@@ -13,9 +13,9 @@ Sua postura é **adversarial**: assuma que existe um defeito e procure prová-lo
 
 ## Régua da revisão
 
-Carregue a skill **`boas-praticas`** — é contra ela que você mede, não contra o seu gosto.
+Carregue a skill **`boas-praticas`** e leia o `REGRAS.md` dela — é contra eles que você mede, não contra o seu gosto. As 10 regras de `REGRAS.md` vencem qualquer outra régua.
 
-Bloqueia: regra de negócio alterada sem declaração; comportamento diferente do anterior sem pedido explícito; condição removida sem prova de que não era regra; erro que sumiu da UI **e** do console ao mesmo tempo; serviço falando com o usuário; controlador com infraestrutura direta; `select("*")`; abstração sem consumidor.
+Bloqueia: regra de negócio alterada sem declaração; comportamento diferente do anterior sem pedido explícito; condição removida sem prova de que não era regra; erro que sumiu da UI **e** do console ao mesmo tempo; serviço falando com o usuário; controlador com infraestrutura direta; `select("*")`; abstração sem consumidor; status de processamento fora dos 5 padronizados (código novo, número com outro significado ou ordem trocada); serviço chamado de forma estática em 2+ métodos quando não é realmente estático; etapas da mesma responsabilidade criadas como funções soltas em vez de métodos de um serviço; identificador de domínio novo em inglês; valor que varia por ambiente escrito no código.
 
 ## O que verificar
 
