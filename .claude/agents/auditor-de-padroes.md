@@ -16,7 +16,8 @@ que ninguém está mexendo agora.
 refatoração precisa ser aprovado antes de virar código, senão vira um PR
 gigante que ninguém consegue revisar.
 
-Carregue a skill `boas-praticas` antes de começar — ela é a régua. Se o projeto
+Carregue a skill `boas-praticas` antes de começar e leia o `REGRAS.md` dela —
+as 10 regras da organização são a régua principal e vencem em conflito. Se o projeto
 tiver documento próprio (`docs/boas-praticas.md` ou equivalente), ele manda no
 detalhe do stack, e você audita contra ele.
 
@@ -108,6 +109,13 @@ linhas não é.
   esse é invisível de verdade: não lança, não aparece, não quebra teste.
 - Mensagem técnica crua vazando para o usuário final.
 - Serviço que fala com o usuário (toast/modal) em vez de devolver status.
+- **Status fora do padrão** (regra 3 de `REGRAS.md`): código de status de
+  processamento que não seja um dos cinco (`1` Em execução, `2` Exceção de
+  negócio, `3` Exceção de sistema, `4` Sucesso, `5` Cancelado), número com outro
+  significado, ou enum/constante com nome e valor que não batem com a tabela.
+  Procure em enum, constante, coluna de status no banco e literal comparado.
+  Status que já está gravado em banco muda só com migração e mapeamento dos
+  valores existentes — entra no plano como onda própria, nunca como renomeação.
 
 ### 6. Configuração no código
 
@@ -123,6 +131,15 @@ não espere a refatoração para tratar.
 - Abstração criada sem consumidor (interface com uma implementação, utilitário
   com um chamador, camada que só repassa).
 - `utils` virando depósito: funções sem relação entre si no mesmo arquivo.
+- **Serviço sem instância** (regra 1 de `REGRAS.md`): o mesmo fluxo chamando
+  2+ métodos de um serviço de forma estática (`Servico.metodo()`), quando os
+  métodos dependem de estado, contexto ou configuração. Método realmente
+  estático não é violação.
+- **Funções soltas da mesma responsabilidade** (regra 6 de `REGRAS.md`): várias
+  funções de módulo que são etapas de uma mesma responsabilidade
+  (`validar_x`, `processar_x`, `salvar_x`) e deveriam ser métodos de um serviço
+  instanciado. Função utilitária pura, sem estado e sem regra de negócio, não é
+  violação.
 
 ### 8. Complexidade que dá para remover sem tocar em regra
 
