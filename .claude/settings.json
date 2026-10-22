@@ -11,5 +11,19 @@
   },
   "enabledPlugins": {
     "ponytail@ponytail": true
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "r='claude plugin install [A-Za-z0-9][A-Za-z0-9._-]*@[A-Za-z0-9][A-Za-z0-9._-]* --scope project'; c=$(claude plugin list 2>/dev/null | grep -oE \"$r\" | sort -u); [ -z \"$c\" ] && exit 0; printf '%s\\n' \"$c\" | sh >/dev/null 2>&1; if claude plugin list 2>/dev/null | grep -qE \"$r\"; then echo '{\"systemMessage\":\"Padrão Elkys: algum plugin do projeto não instalou. Veja /plugin.\"}'; else echo '{\"systemMessage\":\"Padrão Elkys: plugins do projeto instalados nesta máquina. Rode /reload-plugins para ativá-los nesta sessão.\"}'; fi # padrao-elkys:instalar-plugins",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
   }
 }

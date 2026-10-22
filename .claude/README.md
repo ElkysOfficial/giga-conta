@@ -28,7 +28,7 @@ Na dúvida entre dois níveis, vale o mais alto. Pedir "CCMA completo" força o 
 
 ```
 .claude/
-├── settings.json              plugin ponytail fixado (o robô só mexe nessas chaves)
+├── settings.json              plugin ponytail fixado e hook que instala os plugins (o robô só mexe nessas chaves)
 ├── agents/
 │   ├── planner.md             plano da menor alteração, no nível 3        (sem escrita)
 │   ├── coder.md               implementação, quando delegada de propósito
@@ -82,8 +82,17 @@ executa**: scripts, hooks instalados, downloads e envio de dado para fora.
   ele publicar. Código novo do autor só entra sincronizando o fork, criando a tag nova e trocando o
   `ref` em `padrao-agentes/settings-plugins.json` do `ci-templates`, por PR revisado pelo
   `security-auditor`. O robô substitui a entrada `ponytail` inteira a cada passada: um projeto não
-  consegue trocar a fonte. Na primeira sessão o Claude Code pede para confiar no workspace e instalar o
-  plugin; ele precisa de Node na máquina.
+  consegue trocar a fonte. Na primeira sessão o Claude Code pede para confiar no workspace; depois
+  disso, o hook de início de sessão do padrão (`SessionStart`, marca `padrao-elkys:instalar-plugins`)
+  instala os plugins que o `claude plugin list` aponta como habilitados no projeto e ainda não
+  instalados na máquina, e pede `/reload-plugins` para ativar na sessão aberta. Sem nada a instalar,
+  ele leva 1 a 2 s e fica em silêncio. Depende do texto que a CLI imprime: se ele mudar, o hook para
+  de instalar sem erro, e volta o aviso normal do Claude Code. O plugin precisa de Node na máquina.
+  - **Revise `.claude/settings.json` como código executável.** Não há mais confirmação plugin a
+    plugin: todo plugin habilitado no projeto, de qualquer marketplace declarado ali, é instalado
+    sozinho na máquina de quem abrir o repositório, e os hooks dele passam a rodar.
+  - Projeto com `"ponytail@ponytail": false` (opt-out) fica com o `settings.json` intocado, sem o hook.
+    O robô recoloca o hook se ele for apagado; a saída é o opt-out.
   - O que roda, tudo local: no início da sessão e de cada subagente, o hook injeta o modo `full` e
     um mapa do repositório (`git ls-files`); a cada prompt, guarda o nível escolhido; ao fim do
     turno, grava custo, tokens e tempo num CSV em `~/.config/ponytail/band/` e lê os transcripts de
