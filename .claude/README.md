@@ -28,6 +28,7 @@ Na dúvida entre dois níveis, vale o mais alto. Pedir "CCMA completo" força o 
 
 ```
 .claude/
+├── settings.json              plugin ponytail fixado (o robô só mexe nessas chaves)
 ├── agents/
 │   ├── planner.md             plano da menor alteração, no nível 3        (sem escrita)
 │   ├── coder.md               implementação, quando delegada de propósito
@@ -38,7 +39,6 @@ Na dúvida entre dois níveis, vale o mais alto. Pedir "CCMA completo" força o 
 └── skills/
     ├── ccma/                  escolhe o nível e orquestra
     ├── boas-praticas/         diretrizes de código, obrigatória antes do primeiro código
-    ├── ponytail/              menos código, mesma qualidade
     ├── code-security/         escrever seguro por construção
     ├── owasp-security/        OWASP Top 10, ASVS e riscos de Agentic AI
     ├── security-review/       revisão de segurança do diff, antes do PR
@@ -48,6 +48,9 @@ Na dúvida entre dois níveis, vale o mais alto. Pedir "CCMA completo" força o 
     ├── web-3d/                3D e WebGL
     ├── (modelagem de banco e design, de terceiros: ver abaixo)
     └── (específicas do projeto, quando houver)
+
+.agents/skills/                o mesmo espelho, para Codex e outros agentes, mais as seis
+                               ponytail* (no Claude Code elas vêm do plugin)
 ```
 
 Os agentes sem escrita não têm Edit nem Write de propósito: quem escreve não aprova, e quem revisa
@@ -72,6 +75,30 @@ ficam em `~/.claude/padrao/config.json`, e o manifesto do instalador em `~/.clau
 Antes de adotar mais uma, verifique origem, manutenção recente, licença e principalmente **o que ela
 executa**: scripts, hooks instalados, downloads e envio de dado para fora.
 
+- **Ponytail** (`DietrichGebert/ponytail` v5.3.2, MIT): o **plugin completo**, com hooks, a mesma
+  configuração do benchmark. O `.claude/settings.json` aponta para o fork **arquivado**
+  `ElkysOfficial/ponytail`, na tag `v5.3.2` (commit `16352ac`), com `autoUpdate: false`. Não aponta para
+  o repositório do autor porque a fonte de marketplace do Claude Code ignora `sha` e seguiria o que
+  ele publicar. Código novo do autor só entra sincronizando o fork, criando a tag nova e trocando o
+  `ref` em `padrao-agentes/settings-plugins.json` do `ci-templates`, por PR revisado pelo
+  `security-auditor`. O robô substitui a entrada `ponytail` inteira a cada passada: um projeto não
+  consegue trocar a fonte. Na primeira sessão o Claude Code pede para confiar no workspace e instalar o
+  plugin; ele precisa de Node na máquina.
+  - O que roda, tudo local: no início da sessão e de cada subagente, o hook injeta o modo `full` e
+    um mapa do repositório (`git ls-files`); a cada prompt, guarda o nível escolhido; ao fim do
+    turno, grava custo, tokens e tempo num CSV em `~/.config/ponytail/band/` e lê os transcripts de
+    `~/.claude/projects` para o placar (`/ponytail-gain`, `/ponytail band`).
+  - A única saída de rede é um webhook que vem **vazio** e só o próprio dev configura (`/plugin`,
+    opções do ponytail); o projeto não consegue ligá-lo.
+  - Desligar o CSV, só para você: `/plugin` → ponytail → opções → "Task board" desligado.
+  - Tirar o plugin do projeto inteiro: `"ponytail@ponytail": false` em `enabledPlugins` no
+    `.claude/settings.json` (o robô respeita e não mexe mais). Só na sua máquina: o mesmo em
+    `.claude/settings.local.json`, ou `/plugin disable ponytail@ponytail`.
+  - Tinha um `.claude/settings.json` pessoal, fora do git? Passe o conteúdo para
+    `.claude/settings.local.json` antes do `git pull`, senão o pull recusa sobrescrevê-lo.
+  - As seis skills `ponytail*` também ficam em `.agents/skills/` (texto original, licença na pasta e
+    uma seção "Na Elkys"), para Codex e outros agentes. Em `.claude/skills/` não, porque
+    duplicariam o texto que o plugin já injeta. Os `examples/` (saída bruta de benchmark) ficaram de fora.
 - **Trail of Bits** (`trailofbits/skills`): bem mantido, mas licença CC-BY-SA-4.0 (copyleft), que
   contamina o repositório se o conteúdo for copiado. Use pelo marketplace:
   `/plugin marketplace add trailofbits/skills`.

@@ -15,6 +15,8 @@ Comece pelo diff, mas não termine nele: uma linha nova pode ser insegura por ca
 
 Carregue a skill **`boas-praticas`**. Dois itens dela caem no seu escopo e não no do Reviewer: **secret ou credencial no código-fonte** e **log com dado sensível** (senha, token, credencial, dado pessoal desnecessário). Os dois são achado seu, não dívida de refatoração.
 
+O modo **`ponytail`** (nível `full`) vale para você: no Claude Code o plugin `ponytail@ponytail` já o injeta no subagente, não carregue de novo; sem o plugin, leia `.agents/skills/ponytail/SKILL.md`. Ele pede a menor correção que resolve e o fechamento com o que ficou de fora e o risco. Comentário `shortcut:` nunca dispensa achado de segurança. Em conflito, a `ccma` e a `boas-praticas` vencem.
+
 ## Checklist obrigatório
 
 Percorra tudo. Para cada item: **aplicável e OK**, **aplicável e com achado**, ou **não aplicável** (com o motivo).

@@ -14,9 +14,11 @@ Duas coisas nunca saem, em nenhum nível que tenha lógica:
 
 O custo de tokens vem de agente começando do zero e relendo o mesmo código, não das checagens. Por isso o nível corta agente redundante e mantém as checagens.
 
-## Antes de começar: `boas-praticas`
+## Antes de começar: `ponytail` e `boas-praticas`
 
-Carregue a skill `boas-praticas` antes de qualquer código, em todos os níveis com lógica. Se o projeto tiver documento próprio (`docs/boas-praticas.md` ou equivalente) ou skills `<projeto>-*`, eles mandam no detalhe do stack.
+O modo `ponytail` vale em toda tarefa, em **todos os níveis, inclusive o 0**, a sessão inteira (nível `full`, a menos que o usuário peça `/ponytail lite` ou `/ponytail ultra`). Ele decide o tamanho da solução e fecha cada resposta com o que ficou de fora e o risco. No Claude Code ele vem do plugin `ponytail@ponytail` (fixado em `.claude/settings.json`), cujo hook já o injeta na sessão e em cada subagente: **não carregue a skill de novo**. Sem o plugin (projeto que saiu, hook que falhou, Codex e outros agentes), leia `.agents/skills/ponytail/SKILL.md` no começo da tarefa. Responda e escreva os relatórios dele em **português**. Comentário `shortcut:` nunca dispensa achado de segurança nem item bloqueante da `boas-praticas`.
+
+Carregue a skill `boas-praticas` antes de qualquer código, em todos os níveis com lógica. Em conflito com a `ponytail`, esta skill e a `boas-praticas` vencem: menor diff nunca passa por cima de regra de negócio, alteração de lógica sempre leva o teste que a prova (mesmo a que a `ponytail` chamaria de trivial), e a ordem de prioridade abaixo vale sobre a dela. Se o projeto tiver documento próprio (`docs/boas-praticas.md` ou equivalente) ou skills `<projeto>-*`, eles mandam no detalhe do stack.
 
 ## Escolha o nível
 
@@ -38,7 +40,7 @@ Classifique **antes** de começar e diga o nível ao usuário em uma linha. Na d
 Nos níveis 1, 2 e 3 a sessão principal assume o Coder e o Tester, e nos níveis 1 e 2 também o Planner. Assumir o papel é cumprir o que o agente cumpriria, não pular:
 
 - **Plano (níveis 1 e 2):** antes do código, em poucas linhas: comportamento atual, arquivos tocados, quem chama o que muda (buscado, não suposto), mudança de comportamento declarada ou "nenhuma".
-- **Código:** menor alteração possível, dentro de `boas-praticas`.
+- **Código:** a menor mudança completa da `ponytail`, dentro de `boas-praticas`. Atalho com limite conhecido leva o comentário `shortcut: <limite>, <quando evoluir>`.
 - **Teste:** escrever o teste de regressão que **falha no código antigo** (prove, rodando antes e depois, quando for barato), rodar a suíte do que foi tocado e o lint/tipos/build que o CI roda.
 
 ## Regras de custo (valem para todo subagente)
@@ -79,9 +81,11 @@ O objetivo **não é produzir mais código**. É produzir a menor alteração se
 
 ## Skills de apoio
 
-`boas-praticas` é obrigatória e vem antes (ver topo). As demais, conforme o risco, não por protocolo:
+`ponytail` e `boas-praticas` são obrigatórias e vêm antes (ver topo). As demais, conforme o risco, não por protocolo. As `ponytail-*` são do plugin (`/ponytail:ponytail-review`, por exemplo); sem ele, estão em `.agents/skills/`.
 
-- `ponytail`: antes de escrever, isto precisa existir?
+- `ponytail-review`: régua de qualidade do `reviewer` (categoria Lean e achado com caso concreto, na ordem de prioridade desta skill), e revisão avulsa quando pedirem.
+- `ponytail-audit`: auditoria de qualidade do repositório inteiro, periódica; não é etapa de PR. Complementa a `audit-codebase`, que é de segurança.
+- `ponytail-debt`: lista os comentários `shortcut:` antes de uma entrega grande ou ao planejar a sprint.
 - `code-security`: durante a escrita, em código que toque entrada, banco, arquivo, rede, saída ou identidade.
 - `owasp-security`: autenticação, autorização, sessão, API ou agente/IA.
 - `security-review`: revisão de segurança do diff, antes do PR (pode substituir o `security-auditor` no nível 2 quando o diff encostar em algo sensível de leve).

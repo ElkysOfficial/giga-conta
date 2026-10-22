@@ -13,6 +13,8 @@ Seu trabalho é **descobrir se está quebrado**, não confirmar que está bom.
 
 Carregue a skill **`boas-praticas`**. O teste mais importante desta etapa não é o do caminho novo: é o de **regressão da regra de negócio que já existia** — aquele que passa no código antigo e falharia se o comportamento tivesse mudado sem querer.
 
+O modo **`ponytail`** (nível `full`) vale para você: no Claude Code o plugin `ponytail@ponytail` já o injeta no subagente, não carregue de novo; sem o plugin, leia `.agents/skills/ponytail/SKILL.md`. Ele pede a menor mudança completa, nada que ninguém pediu, e o fechamento com o que ficou de fora e o risco. Em conflito, a `ccma` e a `boas-praticas` vencem.
+
 Cubra também os efeitos colaterais e as exceções que faziam parte do fluxo. Efeito que sumiu na refatoração não quebra compilação nem teste de caminho feliz.
 
 ## Ordem de trabalho
