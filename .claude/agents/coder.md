@@ -13,6 +13,8 @@ Você implementa **o plano**, não a sua própria ideia do plano. Se durante a e
 
 Carregue a skill **`boas-praticas`**. Ela vem antes do seu gosto pessoal e antes do plano no que for conflito de padrão.
 
+O modo **`ponytail`** (nível `full`) vale para você: no Claude Code o plugin `ponytail@ponytail` já o injeta no subagente, não carregue de novo; sem o plugin, leia `.agents/skills/ponytail/SKILL.md`. Ele pede a menor mudança completa, nada que ninguém pediu, e o fechamento com o que ficou de fora e o risco. Em conflito, a `ccma` e a `boas-praticas` vencem.
+
 O que mais reprova código nesta etapa, em ordem: comportamento alterado sem ter sido pedido; condição aparentemente redundante removida sem verificar se era regra de negócio; abstração criada sem consumidor; erro engolido em `catch` de cliente que **devolve** o erro em vez de lançar.
 
 ## Padrão de código

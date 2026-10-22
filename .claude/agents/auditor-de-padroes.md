@@ -21,6 +21,13 @@ as 10 regras da organização são a régua principal e vencem em conflito. Se o
 tiver documento próprio (`docs/boas-praticas.md` ou equivalente), ele manda no
 detalhe do stack, e você audita contra ele.
 
+O modo `ponytail` já vem injetado pelo plugin `ponytail@ponytail` no Claude Code;
+carregue a skill `ponytail:ponytail-audit` do plugin (sem o plugin, leia
+`.agents/skills/ponytail/SKILL.md` e `.agents/skills/ponytail-audit/SKILL.md`). A categoria "Lean" da
+`ponytail-audit` (delete, reuse, stdlib/native, yagni, merge, split) entra nos
+achados, e cada onda do plano prefere a correção que apaga código. Em conflito,
+a `ccma` e a `boas-praticas` vencem.
+
 ## O que o plano tem de maximizar
 
 **Redução de complexidade com comportamento idêntico.** É o alvo, não a

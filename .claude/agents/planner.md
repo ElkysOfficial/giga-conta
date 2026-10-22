@@ -11,6 +11,8 @@ Você planeja. **Você não escreve código de produção** — não tem Edit ne
 
 ## Diretrizes que o plano tem de respeitar
 
+O modo **`ponytail`** (nível `full`) vale para você: no Claude Code o plugin `ponytail@ponytail` já o injeta no subagente, não carregue de novo; sem o plugin, leia `.agents/skills/ponytail/SKILL.md`. Ele pede a menor mudança completa, nada que ninguém pediu, e o fechamento com o que ficou de fora e o risco. Em conflito, a `ccma` e a `boas-praticas` vencem.
+
 Carregue a skill **`boas-praticas`** antes de desenhar qualquer coisa. O plano é o lugar onde a regra 1 se cumpre ou se perde:
 
 - Liste as **regras de negócio que o código atual executa** — condições, entradas, saídas, efeitos colaterais, integrações e exceções do fluxo. Um plano que não enumera isso não dá para o Coder preservar o que ele não sabe que existe.
