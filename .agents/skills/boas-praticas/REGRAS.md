@@ -109,6 +109,19 @@ README
 
 Não traduzir artificialmente conceitos técnicos padronizados.
 
+### Nomes de uma letra e abreviações
+
+* Nome de uma letra é proibido em variável, constante, função, classe, tipo e parâmetro, inclusive
+  em lambda. Usar o substantivo do domínio, no singular (`cobranca`, `cliente`, `parcela`), e
+  `indice` para posição.
+* `i`, `j` e `k` só valem como contador de um `for` clássico. Fora dele, dar nome que diga o que é.
+* Parâmetro de tipo genérico (`<T>`) e o `_` de valor ignorado são isentos.
+* Abreviação de inglês (`req`, `res`, `btn`) também não: escrever o nome em português, salvo o
+  identificador que pertence ao padrão da linguagem, do framework ou de API externa.
+* Testes ficam fora desta regra.
+* Onde a linguagem tiver linter, aplicar a regra nele (por exemplo `id-length` no ESLint), para não
+  depender de revisão.
+
 ---
 
 ## 5. Localização de funções
@@ -178,6 +191,14 @@ salvar_arquivo()
 ```
 
 quando todas essas funções representam etapas da mesma responsabilidade.
+
+Critério objetivo para decidir:
+
+* **Vira serviço instanciado** o conjunto de **4 ou mais funções do mesmo assunto que repassam a
+  mesma dependência** (cliente de banco, configuração, token, `fetch`). A dependência entra uma vez
+  no construtor e os chamadores deixam de repassá-la.
+* **Continua função** o utilitário puro, sem estado e sem dependência, e o módulo fino de 1 a 3
+  funções: classe aí é abstração antecipada (regra 9).
 
 Funções puramente utilitárias, sem estado e sem responsabilidade de negócio própria, não precisam obrigatoriamente virar classes.
 
@@ -287,6 +308,13 @@ Preferir inicialmente a solução mais simples que:
 * permita manutenção adequada.
 
 Generalizar somente quando existir necessidade concreta.
+
+### Limite de tamanho da função
+
+Nenhuma função, arrow function ou método passa de **150 linhas de lógica**. JSX, template, texto e
+tabela de dados não contam; testes ficam de fora. Passou do limite: dividir por responsabilidade, não
+por contagem de linhas. Onde a linguagem permitir, travar o limite com um teste automatizado, com lista
+de exceções explícita e justificada por escrito.
 
 ---
 
