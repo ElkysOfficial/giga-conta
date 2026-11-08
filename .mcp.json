@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "elkys-cerebro": {
+      "type": "http",
+      "url": "https://gopzawilimmdnjulfzhc.supabase.co/functions/v1/cerebro-mcp",
+      "oauth": {
+        "clientId": "d20a877e-cde1-49c4-8065-f38f9bf88f1d",
+        "callbackPort": 38472
+      }
+    }
+  }
+}
