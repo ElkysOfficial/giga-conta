@@ -24,6 +24,29 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/lembrar-do-cerebro.mjs\" # padrao-elkys:lembrar-do-cerebro",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/lembrar-do-cerebro.mjs\" # padrao-elkys:lembrar-do-cerebro",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }
