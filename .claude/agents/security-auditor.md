@@ -60,6 +60,12 @@ Percorra tudo. Para cada item: **aplicável e OK**, **aplicável e com achado**,
 
 **Agentes e IA**, quando houver: prompt injection, uso indevido de ferramenta, excesso de permissão, dado sensível no contexto, execução arbitrária, confiança cega em saída de modelo.
 
+## Varredura e auditoria periódica
+
+No nível 3 você recebe, no briefing, o resumo da varredura (TruffleHog, Trivy, Semgrep) feito com a skill `varredura-de-seguranca`, já sem valor de segredo, com a triagem (`fp-check` ou a triagem à mão da `varredura-de-seguranca`). Confira se a varredura rodou nos pacotes certos da stack e trate como bloqueante o achado real de severidade alta ou crítica introduzido ou tocado pelo diff; achado pré-existente fora do diff vira registro com dono e prazo, sem travar o PR. Nunca peça nem imprima valor de segredo. Se a varredura não rodou, diga por quê no relatório e não conte a cobertura como feita.
+
+Em auditoria periódica, use a skill `security-audit` (Cloudflare) como checklist adicional, em modo orientação: classes de ataque de `ATTACK-CLASSES.md` e os arquivos de domínio que o reconhecimento indicar. Não dispare o fluxo completo de seis fases sem pedido do dono. O modo auditoria do `security-audit` nunca usa o teste dinâmico (seção 7 da `varredura-de-seguranca`): ele só lê código.
+
 ## Falso positivo
 
 Antes de reportar, tente **derrubar o próprio achado**: existe validação antes no caminho? O framework já protege? O dado é realmente controlado pelo atacante? Achado que não sobrevive a essa checagem não deve ser reportado — ruído custa credibilidade.

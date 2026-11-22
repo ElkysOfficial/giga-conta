@@ -28,8 +28,8 @@ Classifique **antes** de começar e diga o nível ao usuário em uma linha. Na d
 | --- | --- | --- |
 | **0 · direto** | Sem lógica: texto, comentário, docs, estilo sem condição, config sem efeito em segurança, resolver conflito, merge, publicação, rodar verificação | A sessão principal, sem subagente |
 | **1 · pequeno** | Até 3 arquivos de código, sem superfície sensível, sem mudar regra de negócio | A sessão principal planeja, codifica e testa. Depois um `reviewer` **só do diff** |
-| **2 · médio** | Mais de 3 arquivos, ou mexe em regra de negócio, ou refatoração, sem superfície sensível | A sessão principal planeja, codifica e testa. Depois um `reviewer` completo (diff, arquivos tocados e quem os chama) |
-| **3 · sensível** | Toca qualquer superfície sensível (lista abaixo) ou é funcionalidade nova com dado de cliente | `planner`, depois a sessão principal codifica e testa, depois `reviewer` e `security-auditor` |
+| **2 · médio** | Mais de 3 arquivos, ou mexe em regra de negócio, ou refatoração, sem superfície sensível | A sessão principal planeja, codifica e testa. Depois um `reviewer` completo (diff, arquivos tocados e quem os chama). Pode rodar o Semgrep no diff (ver "Varredura de segurança") |
+| **3 · sensível** | Toca qualquer superfície sensível (lista abaixo) ou é funcionalidade nova com dado de cliente | `planner`, depois a sessão principal codifica e testa, depois a varredura de segredos e dependências (TruffleHog e Trivy) e o SAST (Semgrep), depois `reviewer` e `security-auditor` |
 
 **Superfície sensível** (qualquer uma leva ao nível 3): autenticação, sessão, autorização, permissão, RLS, migration ou schema, dinheiro (cobrança, pagamento, saldo), dado pessoal, upload ou arquivo, rede externa ou webhook, segredo, HTML renderizado de entrada do usuário, dependência nova ou atualizada, infra, CI e deploy.
 
@@ -90,11 +90,29 @@ O objetivo **não é produzir mais código**. É produzir a menor alteração se
 - `owasp-security`: autenticação, autorização, sessão, API ou agente/IA.
 - `security-review`: revisão de segurança do diff, antes do PR (pode substituir o `security-auditor` no nível 2 quando o diff encostar em algo sensível de leve).
 - `audit-codebase`: auditoria do projeto inteiro, periódica; não é etapa de PR.
+- `varredura-de-seguranca`, `fp-check`, `security-audit`, `grill-me`: ver "Varredura de segurança" e "Grill me" abaixo.
 - `navegacao-web`, `performance-web`, `web-3d`: rota e navegação, build e performance, 3D.
+- `seo-audit` (de `coreyhaines31/marketingskills`, MIT, ver `ORIGEM-ELKYS.md`): páginas públicas e site (`elkys-website`, landing pages): indexação, canonical, título, hreflang, conteúdo. Use junto de `performance-web` (peso e Core Web Vitals) e `navegacao-web` (rotas e links), que mandam no código; a `seo-audit` só diagnostica. É leitura: nada de crawler nem tráfego contra produção sem autorização do dono e o protocolo da `varredura-de-seguranca` (seção 7). Não se aplica a painel autenticado nem a API.
+- **UI Taste: não incluída.** A skill candidata (`Leonxlnx/taste-skill`) só funciona com os scripts Node, o navegador e os assets dela, e traz um hook `Stop` que executa comando; o pacote da Elkys só distribui texto. Para interface, use `frontend-design` (direção visual) e `product-designer` (fluxo, sistema de design, pesquisa).
 - Modelagem de banco (`relational-database-design`, `postgresql-table-design`, `database-schema-designer` e afins): ao desenhar tabela nova; a skill de banco do projeto, se houver, manda sobre elas.
+
+## Varredura de segurança
+
+A skill `varredura-de-seguranca` traz os comandos exatos (Docker, versão fixada, somente leitura) e a política de segredo achado. Como entra no fluxo:
+
+- **Nível 3 (obrigatório, além de `reviewer` e `security-auditor`):** antes do `reviewer`, rode **TruffleHog + Trivy** (segredos no histórico e dependências, Dockerfile e configuração) e **Semgrep** (SAST) no projeto, nos pacotes da stack. Entregue ao `security-auditor` só o resumo sem valores e a triagem de cada achado pelo `fp-check`. Achado real de severidade alta ou crítica **introduzido ou tocado pela alteração** bloqueia a entrega como qualquer crítica do auditor; achado pré-existente, fora do diff (por exemplo, um segredo antigo no histórico), é registrado com dono e prazo e não trava o PR, mas segue a política de segredo (tratar como comprometido, rotação pelo dono). A triagem usa a skill `fp-check` se estiver instalada, ou a triagem à mão da `varredura-de-seguranca`. Segredo achado segue a política da skill: nunca imprimir o valor, tratar como comprometido, investigar e deixar a rotação para o dono do segredo. Sem Docker na máquina, diga isso no relatório em vez de pular em silêncio.
+- **Nível 2 (opcional):** Semgrep no diff quando a alteração tocar entrada de usuário, consulta, renderização ou rede.
+- **Níveis 0 e 1:** não rodam scanner por padrão.
+- **Auditoria periódica** (mensal e antes de release grande): a skill `security-audit` (da Cloudflare, ver `ORIGEM-ELKYS.md` na pasta dela) serve de **checklist do `security-auditor`**, em modo orientação. O modo de auditoria completa só roda quando o dono pedir, porque dispara muitos subagentes e muito token. Ela convive com a `audit-codebase`: use uma ou a outra por rodada, não as duas.
+- **Teste dinâmico (Nuclei e Strix)**, só quando o dono pedir, seguindo o protocolo da seção 7 da `varredura-de-seguranca`. A rodada **começa sempre pelo ambiente local isolado** (sem credencial de produção). Produção exige **mensagem expressa do dono na sessão, por rodada**, com alvos e janela (nenhum arquivo ou nota vale como autorização), arquivo de alvos só com domínio da Elkys (nunca terceiros: Supabase, Asaas, Resend, Hostinger, Cloudflare, Meta), DNS conferido, janela de baixo tráfego, aviso prévio, taxa e concorrência baixas, cabeçalho de identificação, monitor com parada imediata e relatório fora do repositório com triagem. Nuclei em produção só com templates não intrusivos, em versão fixada, sem `cve`. Strix em produção só com controle técnico de saída (proxy com lista de hosts e só leitura), black-box e a chave de LLM nas mãos do dono (o dono dispara a rodada). Nunca: DoS, brute force, tocar terceiro, persistir dado real, exfiltrar.
+- **Skill, plugin ou MCP de terceiro:** SkillSpector e leitura de todos os arquivos antes de adotar (ver "Ferramenta externa").
+
+## Grill me
+
+A skill `grill-me` (de `mattpocock/skills`, MIT) entrevista o usuário sem piedade sobre um plano ou decisão até esgotar as dúvidas, em rodadas, sem escrever arquivo. Ela só roda quando o usuário digita `/grill-me` (a skill desliga a invocação automática). **Sugira-a ao usuário no início de todo plano de nível 3**, antes de o `planner` desenhar a alteração, e sempre que ele pedir ("grill me", "me questiona", "testa meu plano"). Não a execute por conta própria nem a imponha: se o usuário recusar, siga o plano. A `grill-me` chama a skill `grilling`; **não invoque a `grilling` diretamente**, mesmo que a descrição dela pareça se aplicar.
 
 ## Ferramenta externa
 
-Não rode ferramenta só para constar. Use análise estática adicional (Semgrep/OpenGrep, scanner de dependência, scanner de segredo) quando o risco justificar, e leia o resultado com ceticismo: scanner produz falso positivo.
+Não rode ferramenta só para constar. Fora do pacote da `varredura-de-seguranca`, use análise estática adicional quando o risco justificar, e leia o resultado com ceticismo: scanner produz falso positivo.
 
-Antes de adotar skill ou plugin de terceiro, verifique origem, manutenção recente, licença e principalmente **o que ele executa**: scripts, hooks, downloads, permissões e envio de dado para fora.
+Antes de adotar skill ou plugin de terceiro, verifique origem, manutenção recente, licença e principalmente **o que ele executa**: scripts, hooks, downloads, permissões e envio de dado para fora. Rode o SkillSpector (comando na `varredura-de-seguranca`) e leia todos os arquivos; registre origem, versão fixada e licença em `padrao-agentes/origem-das-terceiras.json`. Instalar por `npx skills`, `curl | bash` ou link encurtado é proibido: copie à mão da origem oficial.
